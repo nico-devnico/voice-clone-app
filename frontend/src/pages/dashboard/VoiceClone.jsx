@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FiUpload, FiMic, FiType, FiPlay, FiDownload, FiCheckCircle } from 'react-icons/fi';
+import { FiUpload, FiMic, FiType, FiPlay, FiDownload, FiCheckCircle, FiAlertCircle } from 'react-icons/fi';
+import { voiceService } from '../../services/api';
 import '../../styles/VoiceClone.css';
 
 /**
@@ -12,6 +13,7 @@ const VoiceClone = () => {
   const [prompt, setPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [result, setResult] = useState(null);
+  const [error, setError] = useState(null);
 
   // Gère le téléchargement du fichier audio
   const handleFileUpload = (e) => {
@@ -24,20 +26,28 @@ const VoiceClone = () => {
   const handleGenerate = async () => {
     if (!file && !prompt) return;
     setIsGenerating(true);
+    setError(null);
     
     try {
-      // Préparation de l'envoi au backend
-      const formData = new FormData();
-      if (file) formData.append('audio', file);
-      if (prompt) formData.append('text', prompt);
+      let response;
+      if (file && prompt) {
+        // Pour l'instant on utilise un fichier source vide ou le même pour simuler
+        // Dans une vraie app, on pourrait avoir un enregistreur vocal pour le source
+        response = await voiceService.cloneVoice(file, file);
+      } else if (prompt) {
+        response = await voiceService.generateTTS(prompt);
+      }
       
-      // Simulation d'un appel API
-      console.log("Données envoyées :", { 
-        type: file && prompt ? "Clonage + Synthèse" : file ? "Analyse de voix" : "Synthèse vocale seule" 
+      setResult({
+        name: "Résultat généré",
+        duration: "0:05",
+        url: `http://localhost:8000${response.audio_url}`
       });
+      setIsGenerating(false);
       
     } catch (error) {
       console.error("Erreur lors de la génération:", error);
+      setError(error.response?.data?.detail || "Une erreur est survenue lors de la génération.");
       setIsGenerating(false);
     }
   };
@@ -101,6 +111,12 @@ const VoiceClone = () => {
           </div>
 
           {/* Bouton d'action principal */}
+          {error && (
+            <div className="error-message" style={{ color: 'var(--error)', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <FiAlertCircle />
+              <span>{error}</span>
+            </div>
+          )}
           <button 
             className={`btn-generate ${isGenerating ? 'loading' : ''}`}
             onClick={handleGenerate}
