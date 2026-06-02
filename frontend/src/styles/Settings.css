@@ -1,0 +1,111 @@
+.settings-page {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.settings-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.settings-group {
+  padding: var(--space-2xl);
+}
+
+.group-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xl);
+  margin-bottom: var(--space-2xl);
+  padding-bottom: var(--space-lg);
+  border-bottom: 1px solid var(--border-secondary);
+}
+
+.group-header .icon {
+  font-size: 1.5rem;
+  color: var(--text-tertiary);
+}
+
+.group-info h3 {
+  font-size: 1.125rem;
+  margin-bottom: 2px;
+}
+
+.setting-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-xl);
+  padding: var(--space-md) 0;
+}
+
+.setting-info span {
+  font-weight: 600;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.setting-info p {
+  font-size: 0.8125rem;
+}
+
+/* Toggle Switch */
+.toggle-switch {
+  width: 44px;
+  height: 24px;
+  background-color: var(--border-primary);
+  border-radius: var(--radius-full);
+  position: relative;
+  transition: var(--transition-normal);
+  flex-shrink: 0;
+}
+
+.toggle-switch.active {
+  background-color: var(--success);
+}
+
+.switch-knob {
+  width: 18px;
+  height: 18px;
+  background-color: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  transition: var(--transition-normal);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.toggle-switch.active .switch-knob {
+  left: 23px;
+}
+
+.settings-select {
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-primary);
+  background-color: var(--bg-primary);
+  font-size: 0.875rem;
+}
+
+.setting-danger {
+  margin-top: var(--space-2xl);
+  padding-top: var(--space-xl);
+  border-top: 1px solid var(--border-secondary);
+}
+
+.btn-danger {
+  padding: 10px 20px;
+  background-color: #fff1f0;
+  color: var(--error);
+  border: 1px solid #ffa39e;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.btn-danger:hover {
+  background-color: var(--error);
+  color: white;
+}
