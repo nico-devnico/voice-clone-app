@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FiUpload, FiFileText, FiCopy, FiCheckCircle, FiMic } from 'react-icons/fi';
+import { voiceService } from '../../services/api';
 import '../../styles/VoiceClone.css';
 
 /**
@@ -24,10 +25,13 @@ const STTPage = () => {
     
     try {
       console.log("Transcription de :", file.name);
-      // Ici l'appel API réel
+      const response = await voiceService.transcribe(file);
+      setTranscription(response.text);
+      setIsTranscribing(false);
     } catch (error) {
       console.error("Erreur STT:", error);
       setIsTranscribing(false);
+      alert("Erreur lors de la transcription. Vérifiez que le serveur backend est lancé avec les dépendances nécessaires.");
     }
   };
 

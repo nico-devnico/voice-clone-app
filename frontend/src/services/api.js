@@ -44,8 +44,26 @@ export const voiceService = {
     });
     return response.data;
   },
+  cloneTTS: async (text, referenceFile, language = 'English') => {
+    const formData = new FormData();
+    formData.append('text', text);
+    formData.append('reference_file', referenceFile);
+    formData.append('language', language);
+    const response = await api.post('/voice/clone-tts', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return response.data;
+  },
   generateTTS: async (text, language = 'English', speed = 1.0) => {
     const response = await api.post('/tts/generate', { text, language, speed });
+    return response.data;
+  },
+  transcribe: async (audioFile) => {
+    const formData = new FormData();
+    formData.append('file', audioFile);
+    const response = await api.post('/stt/transcribe', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
     return response.data;
   },
 };

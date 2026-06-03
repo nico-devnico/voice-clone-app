@@ -1,5 +1,11 @@
+import sys
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+# Add ai_model to path to find openvoice
+sys.path.append(os.path.join(os.getcwd(), 'ai_model', 'OpenVoice'))
+
 from app.api.api_v1.api import api_router
 from app.core.config import settings
 

@@ -11,9 +11,12 @@ import '../../styles/VoiceClone.css';
 const VoiceClone = () => {
   const [file, setFile] = useState(null);
   const [prompt, setPrompt] = useState('');
+  const [language, setLanguage] = useState('English');
   const [isGenerating, setIsGenerating] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
+
+  const languages = ['English', 'Spanish', 'French', 'Chinese', 'Japanese', 'Korean'];
 
   // Gère le téléchargement du fichier audio
   const handleFileUpload = (e) => {
@@ -31,11 +34,9 @@ const VoiceClone = () => {
     try {
       let response;
       if (file && prompt) {
-        // Pour l'instant on utilise un fichier source vide ou le même pour simuler
-        // Dans une vraie app, on pourrait avoir un enregistreur vocal pour le source
-        response = await voiceService.cloneVoice(file, file);
+        response = await voiceService.cloneTTS(prompt, file, language);
       } else if (prompt) {
-        response = await voiceService.generateTTS(prompt);
+        response = await voiceService.generateTTS(prompt, language);
       }
       
       setResult({
@@ -100,8 +101,18 @@ const VoiceClone = () => {
           <div className="input-section mt-xl">
             <div className="section-title">
               <FiType className="icon" />
-              <h3>Texte à générer (Optionnel)</h3>
+              <h3>Langue et Texte</h3>
             </div>
+            <select 
+              className="text-input" 
+              style={{ marginBottom: '1rem', height: 'auto', padding: '0.75rem' }}
+              value={language}
+              onChange={(e) => setLanguage(e.target.value)}
+            >
+              {languages.map(lang => (
+                <option key={lang} value={lang}>{lang}</option>
+              ))}
+            </select>
             <textarea 
               className="text-input"
               placeholder="Entrez le texte que la voix doit prononcer..."

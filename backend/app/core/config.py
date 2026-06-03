@@ -18,8 +18,8 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "sqlite+aiosqlite:///./voice_clone.db"
 
     # AI Model Paths
-    CKPT_BASE: str = "../ai_model/OpenVoice/checkpoints/base_speakers/EN"
-    CKPT_CONVERTER: str = "../ai_model/OpenVoice/checkpoints/converter"
+    CKPT_BASE: str = "../ai_model/OpenVoice/checkpoints_v2/base_speakers"
+    CKPT_CONVERTER: str = "../ai_model/OpenVoice/checkpoints_v2/converter"
 
     model_config = SettingsConfigDict(case_sensitive=True, env_file=".env")
 

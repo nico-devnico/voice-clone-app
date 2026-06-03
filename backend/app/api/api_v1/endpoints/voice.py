@@ -1,4 +1,4 @@
-from fastapi import APIRouter, UploadFile, File, HTTPException
+from fastapi import APIRouter, UploadFile, File, HTTPException, Form
 from app.services.voice_service import voice_service
 import shutil
 import os
@@ -19,12 +19,61 @@ async def extract_se(file: UploadFile = File(...)):
     
     try:
         se = await voice_service.extract_speaker_embedding(temp_file)
-        return {"se": "mock_se_data", "message": "Speaker embedding extracted successfully"}
+        # Convert tensor to list for JSON serialization if it's a tensor
+        if torch.is_tensor(se):
+            se = se.tolist()
+        return {"se": se, "message": "Speaker embedding extracted successfully"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         if os.path.exists(temp_file):
             os.remove(temp_file)
+
+@router.post("/clone-tts")
+async def clone_tts(
+    text: str = Form(...),
+    reference_file: UploadFile = File(...),
+    language: str = Form("English")
+):
+    ref_ext = os.path.splitext(reference_file.filename)[1]
+    ref_path = os.path.join(UPLOAD_DIR, f"ref_{uuid.uuid4()}{ref_ext}")
+    
+    output_dir = "outputs"
+    os.makedirs(output_dir, exist_ok=True)
+    output_filename = f"clone_tts_{uuid.uuid4()}.wav"
+    output_path = os.path.join(output_dir, output_filename)
+    
+    temp_tts_path = os.path.join(output_dir, f"temp_tts_{uuid.uuid4()}.wav")
+
+    try:
+        # Save reference file
+        with open(ref_path, "wb") as buffer:
+            shutil.copyfileobj(reference_file.file, buffer)
+            
+        # 1. Generate base TTS
+        await voice_service.generate_tts(text, temp_tts_path, language=language)
+        
+        # 2. Extract SE from reference
+        target_se = await voice_service.extract_speaker_embedding(ref_path)
+        
+        # 3. Convert voice
+        result_path = await voice_service.convert_voice(temp_tts_path, target_se, output_path, language=language)
+        
+        if result_path:
+            return {
+                "message": "TTS with cloned voice generated successfully", 
+                "audio_url": f"/downloads/{output_filename}"
+            }
+        else:
+            raise HTTPException(status_code=500, detail="Cloning failed")
+            
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        # Clean up temp files
+        for p in [ref_path, temp_tts_path]:
+            if os.path.exists(p):
+                os.remove(p)
 
 @router.post("/clone")
 async def clone_voice(

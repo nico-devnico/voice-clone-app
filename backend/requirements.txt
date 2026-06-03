@@ -11,4 +11,7 @@ torch
 numpy
 librosa
 soundfile
-openvoice @ file:///c:/Users/DELL/Documents/voice-clone-app/ai_model/OpenVoice
+faster-whisper
+pydub
+melo @ git+https://github.com/myshell-ai/MeloTTS.git
+MyShell-OpenVoice @ file:///c:/Users/DELL/Documents/voice-clone-app/ai_model/OpenVoice
